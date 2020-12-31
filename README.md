@@ -81,7 +81,7 @@ longitude on which to center the object.
 1.  The function works by first adding a line segment to “cut” the `sf`
     object.
 
-<img src="/Users/nmiller/Documents/GitHub Repos/mapping/mapping/images/image (6).png" width="100%" />
+<img src="images/image (6).png" width="100%" />
 
 2.  The intersection of the line and the sf shape is then calculated.  
 
