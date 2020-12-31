@@ -1,9 +1,18 @@
-Global Map Functions
-================
-N. Miller
-12/30/2020
+---
+title: "Global Map Functions"
+author: "N. Miller"
+date: "12/30/2020"
+output: github_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
 
-``` r
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, comment = FALSE)
+```
+
+```{r}
 library(ggplot2)
 library(dplyr)
 library(readr)
@@ -21,33 +30,30 @@ unsatisfactory.
 **Method 1:** Using `maptools::nowrapRecenter()` it is possible in some
 cases to recenter an Atlantic centered vector file on the dateline.
 
-``` r
+```{r, fig.height = 5, fig.width = 10}
 land_sf <- rnaturalearth::ne_countries(scale = 110, returnclass = 'sf')
 land_sf_pacfic <- sf::st_as_sf(maptools::nowrapRecenter(as(land_sf, 'Spatial')))
 land_sf_pacfic_ee <- sf::st_transform(land_sf_pacfic, crs = "+proj=eqearth +lon_0=180 +wktext")
 ggplot() +
   geom_sf(data = land_sf_pacfic_ee)
+
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
-
-Despite having an `offset` parameter it wasn’t possible to recenter an
+Despite having an `offset` parameter it wasn't possible to recenter an
 Atlantic centered vector shapefile. It also sometimes required some
 annoying back-and-forth from `sf` to `sp` to `sf` .
 
-``` r
+```{r, fig.height = 5, fig.width = 10}
 land_sf_pacfic <- sf::st_as_sf(maptools::nowrapRecenter(as(land_sf, 'Spatial'),offset = 80))
 land_sf_pacfic_ee <- sf::st_transform(land_sf_pacfic, crs = "+proj=eqearth +lon_0=80 +wktext")
 ggplot() +
   geom_sf(data = land_sf_pacfic_ee)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
-
 **Method 2:** Using a cutting and recentering method using
 `sf::st_crop()`
 
-``` r
+```{r, fig.height = 5, fig.width = 10}
 land_sf <- rnaturalearth::ne_countries(scale = 110, returnclass = 'sf')
 x1 <- sf::st_crop(land_sf, sf::st_bbox(c(xmin = 0, xmax = 180, ymin = -90, ymax = 90)))
 x2 <- sf::st_crop(land_sf, sf::st_bbox(c(xmin = -180, xmax = -0.001, ymin = -90, ymax = 90)))
@@ -57,8 +63,6 @@ land_sf_pacific_ee <- land_sf_pacific %>%
 ggplot() +
   geom_sf(data = land_sf_pacific_ee)
 ```
-
-![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 Neither of these methods was very satisfying and they both required that
 the vector to be recentered on the dateline when using an
@@ -78,32 +82,42 @@ big step forward.
 The `recenter_sf` function is designed to take an `sf` object and a
 longitude on which to center the object.
 
-1.  The function works by first adding a line segment to “cut” the `sf`
+1.  The function works by first adding a line segment to "cut" the `sf`
     object.
 
-<img src="/Users/nmiller/Documents/GitHub Repos/mapping/mapping/images/image (6).png" width="100%" />
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics(here::here('images','image (6).png'))
+```
 
-2.  The intersection of the line and the sf shape is then calculated.  
+2.  The intersection of the line and the sf shape is then calculated.\
 
-<img src="/Users/nmiller/Documents/GitHub Repos/mapping/mapping/images/image (7).png" width="100%" />
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics(here::here('images','image (7).png'))
+```
 
 3.  The line intersection is then buffered a very small amount
     (exaggerated below for the visual).
 
-<img src="/Users/nmiller/Documents/GitHub Repos/mapping/mapping/images/image (8).png" width="100%" />
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics(here::here('images','image (8).png'))
+```
 
 4.  The shape can then be reprojected with a new center. However, when
     large polygons are cut you end up with a line connecting the two end
     vertices. The line will not curve and the map will have straight
     edges `(see below)`.
 
-<img src="/Users/nmiller/Documents/GitHub Repos/mapping/mapping/images/image (9).png" width="100%" />
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics(here::here('images','image (9).png'))
+```
 
 5.  To avoid this the `recenter_sf` function adds additional vertices to
-    those polygons that are cut, which results in a curved edge `(see
-    below)`.
+    those polygons that are cut, which results in a curved edge
+    `(see below)`.
 
-<img src="/Users/nmiller/Documents/GitHub Repos/mapping/mapping/images/image (10).png" width="100%" />
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics(here::here('images','image (10).png'))
+```
 
 `TODO:`
 
@@ -111,7 +125,7 @@ longitude on which to center the object.
 
 ### Examples
 
-``` r
+```{r}
 # map theme
 map_theme <- ggplot2::theme_minimal() + 
   ggplot2::theme( 
@@ -138,19 +152,19 @@ map_theme <- ggplot2::theme_minimal() +
 
 ##### Load a land vector shapefile
 
-``` r
+```{r}
 land_sf <- rnaturalearth::ne_countries(scale = 110, returnclass ='sf')
 ```
 
 ##### Load the `recenter_vector` function
 
-``` r
+```{r}
 source(here::here('R','recenter_vector.R'))
 ```
 
 ### Recenter the vector file (at -80, -160 and 110)
 
-``` r
+```{r, fig.width = 7, fig.height = 10}
 land_recenter_neg80 <- recenter_sf(land_sf,center = -80)
 land_recenter_neg160 <- recenter_sf(land_sf,center = -160)
 land_recenter_110 <- recenter_sf(land_sf,center = 110)
@@ -179,9 +193,8 @@ plot_110 <- ggplot() +
   map_theme +
   labs(title = '110')
 plot_neg80 + plot_neg160 + plot_110 + patchwork::plot_layout(ncol = 1)
-```
 
-![](README_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+```
 
 ## Add Points
 
@@ -192,7 +205,7 @@ will not need to be split in the way that a polygon must. Thus when a
 are treated slightly differently, but are returned with the appropriate
 center.
 
-``` r
+```{r}
 points <- readr::read_csv(here::here('data','points.csv'))
 points_sf <- points %>%
   sf::st_as_sf(.,coords = c('lon_mean','lat_mean'), crs = 4326) %>%
@@ -203,12 +216,12 @@ points_sf <- points %>%
 
 #### Center at -160
 
-``` r
+```{r}
 land_recenter <- recenter_sf(land_sf,center = -160)
 points_recenter <- recenter_sf(points_sf,center = -160)
 ```
 
-``` r
+```{r, fig.height = 5, fig.width = 10}
 point_color = "#204280"
 
 ggplot() +
@@ -226,8 +239,6 @@ ggplot() +
   map_theme
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
-
 ## Add points and paths
 
 When a LINESTRING or a path is added to a plot that has been recentered
@@ -236,12 +247,12 @@ would with a POLYGON. By splitting the linestring we can have it appear
 to wrap around the globe.
 
 However in the `recenter_sf` function a linestring is treated slightly
-differently as it does not have addition vertices added to the ‘cut’
+differently as it does not have addition vertices added to the 'cut'
 region in the way that a cut POLYGON does.
 
 #### Center at 80
 
-``` r
+```{r}
 path <- readr::read_csv(here::here('data','paths.csv'))
 path_sf <- path %>%
   sf::st_as_sf(.,coords = c('lon','lat')) %>%
@@ -255,7 +266,7 @@ points_recenter <- recenter_sf(points_sf,center = 80)
 land_recenter <- recenter_sf(land_sf,center = 80)
 ```
 
-``` r
+```{r, fig.height = 5, fig.width = 10}
 path_color = "#EE6256"
 point_color = "grey80"
 
@@ -279,8 +290,6 @@ ggplot() +
   map_theme
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
-
 This first iteration of the recenter\_sf function seems to work quite
 well, though I am certain there are edge cases where is fails. I have
 also demonstrated that is works quite perfomatively with large and
@@ -289,7 +298,9 @@ used in fisheries/marine mapping.
 
 `Example:`
 
-<img src="/Users/nmiller/Documents/GitHub Repos/mapping/mapping/images/unnamed-chunk-3-1.png" width="100%" />
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics(here::here('images','unnamed-chunk-3-1.png'))
+```
 
 ## Recentering Global Rasters (raster)
 
@@ -304,7 +315,7 @@ center. Once again this currently only uses an Equal Earth projection.
 
 ##### Load the `recenter_raster` function
 
-``` r
+```{r}
 source(here::here('R','recenter_raster.R'))
 ```
 
@@ -320,7 +331,7 @@ flags and geartypes.
 Some methods for processing the data are described here
 <https://globalfishingwatch.org/data-blog/working-with-our-downloadable-public-data-in-r/>
 
-``` r
+```{r}
 raster_data <- readr::read_csv(here::here('data','effort_df.csv'))
 ```
 
@@ -328,7 +339,7 @@ raster_data <- readr::read_csv(here::here('data','effort_df.csv'))
 
 ### Center on -160
 
-``` r
+```{r, fig.height = 5, fig.width = 10}
 fishing_recenter <- recenter_raster(raster_df = raster_data, res = 1, center = -160)
 land_recenter <- recenter_sf(shp_file = land_sf,center = -160)
 
@@ -346,11 +357,9 @@ ggplot() +
   map_theme
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
-
 ### Recenter on 80
 
-``` r
+```{r, fig.height = 5, fig.width = 10}
 fishing_recenter <- recenter_raster(raster_df = raster_data, res = 1, center = 80)
 land_recenter <- recenter_sf(shp_file = land_sf,center = 80)
 
@@ -367,5 +376,3 @@ ggplot() +
                        na.value = NA) +
   map_theme
 ```
-
-![](README_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
