@@ -81,29 +81,29 @@ longitude on which to center the object.
 1.  The function works by first adding a line segment to “cut” the `sf`
     object.
 
-<img src="/Users/nmiller/Documents/GitHub Repos/mapping/mapping/images/image (6).png" width="100%" />
+<img src="images/image (6).png" width="100%" />
 
 2.  The intersection of the line and the sf shape is then calculated.  
 
-<img src="/Users/nmiller/Documents/GitHub Repos/mapping/mapping/images/image (7).png" width="100%" />
+<img src="images/image (7).png" width="100%" />
 
 3.  The line intersection is then buffered a very small amount
     (exaggerated below for the visual).
 
-<img src="/Users/nmiller/Documents/GitHub Repos/mapping/mapping/images/image (8).png" width="100%" />
+<img src="images/image (8).png" width="100%" />
 
 4.  The shape can then be reprojected with a new center. However, when
     large polygons are cut you end up with a line connecting the two end
     vertices. The line will not curve and the map will have straight
     edges `(see below)`.
 
-<img src="/Users/nmiller/Documents/GitHub Repos/mapping/mapping/images/image (9).png" width="100%" />
+<img src="images/image (9).png" width="100%" />
 
 5.  To avoid this the `recenter_sf` function adds additional vertices to
     those polygons that are cut, which results in a curved edge `(see
     below)`.
 
-<img src="/Users/nmiller/Documents/GitHub Repos/mapping/mapping/images/image (10).png" width="100%" />
+<img src="images/image (10).png" width="100%" />
 
 `TODO:`
 
