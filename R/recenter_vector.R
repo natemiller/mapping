@@ -42,13 +42,17 @@ recenter_sf <- function(shp_file, center) {
   
   shift <- 180 + shift_center_v(center = center)
   # create "split line" to split polygon/lines
-  WGS84 <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
-  split_line <- sp::SpatialLines(list(sp::Lines(list(sp::Line(cbind(180 - shift, c(-90, 90)))),
-                                                ID = "line")),
-                                 proj4string = WGS84
+split_line <- sf::st_as_sf(
+  sf::st_set_crs(
+    sf::st_sfc(
+      sf::st_linestring(
+        cbind(180 - shift, c(-90, 90))
+        )
+    ),
+    value = 4326
   )
-  split_line <- sf::st_as_sf(split_line)
-  
+)
+
   # does split intersect shape?
   line_int <- sf::st_intersection(split_line, shp_file)
   
