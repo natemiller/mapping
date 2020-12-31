@@ -9,7 +9,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, comment = FALSE)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, comment = FALSE,fig.path = 'README_files/figure-gfm/')
 ```
 
 ```{r}
