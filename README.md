@@ -69,9 +69,8 @@ starting point).
 
 I finally sat down and using this gist as inspiration
 <https://gist.github.com/valentinitnelav/c7598fcfc8e53658f66feea9d3bafb40>
-I was able to develop a method that appears to work. It can be improved
-as it uses the `sp` package in places where it could use `sf`, but its a
-big step forward.
+I was able to develop a method that appears to work. It can be improved,
+but its a big step forward for me.
 
 ## Recentering Global Vectors (sf)
 
@@ -103,7 +102,7 @@ longitude on which to center the object.
     those polygons that are cut, which results in a curved edge `(see
     below)`.
 
-<img src="/images/image (10).png" width="100%" />
+<img src="images/image (10).png" width="100%" />
 
 `TODO:`
 
