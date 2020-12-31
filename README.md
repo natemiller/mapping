@@ -289,7 +289,7 @@ used in fisheries/marine mapping.
 
 `Example:`
 
-<img src="/Users/nmiller/Documents/GitHub Repos/mapping/mapping/images/unnamed-chunk-3-1.png" width="100%" />
+<img src="images/unnamed-chunk-3-1.png" width="100%" />
 
 ## Recentering Global Rasters (raster)
 
