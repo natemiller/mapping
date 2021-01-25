@@ -18,6 +18,7 @@ shift_center_r <- function(center) {
 #' @param raster_df dataframe of gridded data
 #' @param res numeric, resolution of raster data
 #' @param center numeric, central longitude of map
+#' @param proj string, proj4 string
 #' @return recentered raster dataframe
 #'
 #' @importFrom dplyr rename
@@ -29,12 +30,20 @@ shift_center_r <- function(center) {
 #'
 #' @export
 #' @examples
-#' recenter_raster(raster_df, 1, -80)
-#' recenter_raster(raster_df, 0.5, 160)
+#' proj1 <- '+proj=moll'
+#' proj2 <- '+proj=eqearth +lon_0=0 +wktext'
+#' proj3 <- '+proj=robin +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs'
+#' recenter_raster(raster_df, 1, -80, proj = proj1)
+#' recenter_raster(raster_df, 0.5, 160, proj = proj2)
+#' recenter_raster(raster_df, 0.5, 110, proj = proj3)
 ###
 # function to recenter global raster in equal earth projection
 ###
-recenter_raster <- function(raster_df, res, center) {
+recenter_raster <- function(raster_df, res, center = 0, proj = '+proj=eqearth +lon_0=0 +wktext') {
+  
+  if (!is.character(proj)) {
+    stop('proj must be a valid proj4 string')
+  }
   shift <- shift_center_r(center = center)
   
   # shift the raster coordinates
@@ -72,7 +81,7 @@ recenter_raster <- function(raster_df, res, center) {
     ) %>%
     raster::projectRaster(.,
                           over = TRUE,
-                          crs = "+proj=eqearth +wktext"
+                          crs = proj
     ) %>%
     raster::as.data.frame(.,
                           xy = TRUE
@@ -84,4 +93,5 @@ recenter_raster <- function(raster_df, res, center) {
   
   return(output_raster)
 }
+
 

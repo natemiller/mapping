@@ -88,20 +88,20 @@ longitude on which to center the object.
 knitr::include_graphics(here::here('images','image (6).png'))
 ```
 
-2.  The intersection of the line and the sf shape is then calculated.
+1.  The intersection of the line and the sf shape is then calculated.
 
 ```{r echo=FALSE, out.width='100%'}
 knitr::include_graphics(here::here('images','image (7).png'))
 ```
 
-3.  The line intersection is then buffered a very small amount
+1.  The line intersection is then buffered a very small amount
     (exaggerated below for the visual).
 
 ```{r echo=FALSE, out.width='100%'}
 knitr::include_graphics(here::here('images','image (8).png'))
 ```
 
-4.  The shape can then be reprojected with a new center. However, when
+1.  The shape can then be reprojected with a new center. However, when
     large polygons are cut you end up with a line connecting the two end
     vertices. The line will not curve and the map will have straight
     edges `(see below)`.
@@ -110,7 +110,7 @@ knitr::include_graphics(here::here('images','image (8).png'))
 knitr::include_graphics(here::here('images','image (9).png'))
 ```
 
-5.  To avoid this the `recenter_sf` function adds additional vertices to
+1.  To avoid this the `recenter_sf` function adds additional vertices to
     those polygons that are cut, which results in a curved edge
     `(see below)`.
 
